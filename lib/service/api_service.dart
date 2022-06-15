@@ -3,14 +3,16 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   String apiUrl = 'https://api.football-data.org/v4/';
-
-  //This method is design the team with the most wins in the last 30 days of the premier league
+  var headers = {
+    'X-Auth-Token': '6dd5adbc5da64e488f904313c2d56ca0',
+  };
+  //This method is designed to return the team with the most wins in the last 30 days of the premier league
   Future<dynamic> getTeamWithMostWins() async {
+    //This GET request checks for the matches played 30 days after the date of the last game of the premier league
+    //It only retrieves matches that are finished to avoid get rescheduled or cancelled matches.
     var response = await http.get(
         Uri.parse(apiUrl + 'competitions/PL/matches?dateFrom=2022-04-22&dateTo=2022-05-22&status=FINISHED'),
-        headers: {
-          'X-Auth-Token': '6dd5adbc5da64e488f904313c2d56ca0',
-        });
+        headers: headers);
 
     List<int> winnerArray = [];
     List<dynamic> parsedJson = json.decode(response.body)['matches'];
@@ -63,9 +65,7 @@ class ApiService {
 
   //This method takes a team's id and passes back it's details
   dynamic getTeamDetails(int teamId) async {
-    var response = await http.get(Uri.parse(apiUrl + 'teams/$teamId'), headers: {
-      'X-Auth-Token': '6dd5adbc5da64e488f904313c2d56ca0',
-    });
+    var response = await http.get(Uri.parse(apiUrl + 'teams/$teamId'), headers: headers);
     return response;
   }
 }
